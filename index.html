@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Populating data table with data obtained from Parse Server</title>
+    <link rel="stylesheet" type="text/css" href="./semantic.css">
+    <link rel="stylesheet" type="text/css" href="./index.css">
+    <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <h3>Click the button below to populate the table with the necessary information!</h3>
+        <h5>
+          So I decided to use semantic-UI which is another CSS Framework like Bootstrap. The class names
+          I used in the table element and buttons etc. are based on semantic-UI
+        </h5>
+      </div>
+      <div>
+        <button class="ui button blue" onclick="populateTable()">Let's do this baby!</button>
+      </div>
+      <table class="ui celled table" id="bragstable">
+        <thead>
+          <td>S/N</td>
+          <td>Description</td>
+          <td>Main Image</td>
+          <td>Poster ID</td>
+          <td>Poster Name</td>
+        </thead>
+      </table>
+    </div>
+    <script>
+      var tableToBePopulated = document.querySelector('#bragstable');
+      // Initialize Parse App when the page load is completed
+      window.addEventListener('load', function() {
+        Parse.initialize(
+          'MgENsCtDajnVzHWpgf5lOwMk6lxnTtuEY1QnKW8i', // App ID
+          'ygHJcy5cDjv2UPyiI1U5KgtbYlPOV2rOc1kk2NmI'  // JavaScript ID
+        );
+        Parse.serverURL = "https://parseapi.back4app.com/";
+        console.log('App Loaded!');
+      }, false);
+
+      function populateTable() {
+        var tableName = "Brags"; // The table whose data is to be read
+        var queryObject = new Parse.Query(tableName);
+        queryObject.notEqualTo("objectId", "");
+        queryObject.find()
+                   .then(function(results) {
+                     /*
+                        THIS IS THE MOST IMPORTANT SECTION
+                        Understand that 'results' is an array of data so we have to loop through it and
+                        populate the table with the values obtained
+                     */
+                     var serialNumber = 1;
+                     results.forEach(function (result) {
+                       /*
+                       So for every individual result what is happening here is that I create
+                       a new ROW and then 5 columns (S/N, Description, Mainimage, PosterId and PosterName )
+                       and then I add data to those columns by altering the innerHTML properties
+                       It's that simple!!!
+                       After creating the rows i add the newly created row to the table befor moving to the next createElement
+                       I hope you guys Understand this
+                       But just know that this code is responsible for populating the table
+                       */
+                       var tableRow = document.createElement('tr');
+                       var serialNumberColumn = document.createElement('td');
+                       var descriptionColumn = document.createElement('td');
+                       var mainImageColumn = document.createElement('td');
+                       var posterIdColumn = document.createElement('td');
+                       var posterNameColumn = document.createElement('td');
+                       serialNumberColumn.innerHTML = serialNumber;
+                       descriptionColumn.innerHTML = result.attributes.description;
+                       mainImageColumn.innerHTML = result.attributes.mainimage;
+                       posterIdColumn.innerHTML = result.attributes.posterid;
+                       posterNameColumn.innerHTML = result.attributes.postername;
+                       tableRow.appendChild(serialNumberColumn);
+                       tableRow.appendChild(descriptionColumn);
+                       tableRow.appendChild(mainImageColumn);
+                       tableRow.appendChild(posterIdColumn);
+                       tableRow.appendChild(posterNameColumn);
+                       tableToBePopulated.appendChild(tableRow);
+                       serialNumber++;
+                     });
+                   })
+                   .catch(function (error) {
+                     console.warn(error);
+                     alert('An Error Occured!');
+                   });
+      }
+    </script>
+  </body>
+</html>

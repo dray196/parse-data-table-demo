@@ -4,3 +4,14 @@ body {
 div {
   margin: 1rem auto;
 }
+
+table td {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  /* white-space: nowrap; */
+}
+
+table td:last-child {
+  min-width: 15%;
+  max-width: 15%;
+}
